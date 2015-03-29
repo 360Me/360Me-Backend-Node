@@ -1,1 +1,3 @@
-# 360Me-Backend-Node
+# 360Me-Backend
+
+a [Sails](http://sailsjs.org) application
