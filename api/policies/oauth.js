@@ -13,13 +13,19 @@ module.exports = function(req, res, next) {
    * See if req.token exists and is valid
    */
 
-  // User is allowed, proceed to the next policy,
-  // or if this is the last policy, the controller
-  if (req.token) {
+  var token = req.headers.token;
+
+  User.findOne({ token: token }, function (err, user) {
+    if (err) console.log(err);
+
+    if (!user) {
+      return res.json({ status: '403', error: 'You are not permitted to perform this action.'});
+    }
+
     return next();
-  }
+  });
 
   // User is not allowed
   // (default res.forbidden() behavior can be overridden in `config/403.js`)
-  return res.forbidden('You are not permitted to perform this action.');
+  //return res.forbidden('You are not permitted to perform this action.');
 };

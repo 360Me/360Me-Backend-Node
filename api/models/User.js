@@ -16,7 +16,8 @@ var User = {
    // connections: { collection: 'Connection', via: 'users' },
 
     /** OAuth2 token we get from LinkedIn */
-    token: { type: 'json' }
+    token: { type: 'string' },
+    tokenExpires: { type: 'integer' }
     /** JWT we generate
         apiToken: { collection: 'Token', via: 'user' },
     **/

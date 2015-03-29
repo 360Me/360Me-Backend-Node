@@ -61,7 +61,8 @@ var AuthController = {
               // Create user
               User.create({
                 linkedinId: profile.id,
-                token: token,
+                token: token.access_token,
+                tokenExpires: token.expires_in,
                 firstName: profile.firstName,
                 lastName: profile.lastName,
                 headline: profile.headline,
@@ -73,7 +74,9 @@ var AuthController = {
               });
             } else {
                // Save updated user (mainly for token but other fields may have changed since last login)
-                user.token = JSON.parse(token);
+                var tokenObject = JSON.parse(token);
+                user.token = tokenObject.access_token;
+                user.tokenExpires = tokenObject.expires_in;
                 user.save(function (err, updatedUser) {
                   if (err) return handleAuthError(res, err);
                   return res.json({ user: user });
