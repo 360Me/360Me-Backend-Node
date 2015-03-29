@@ -36,6 +36,8 @@ var AuthController = {
    * @param {Object} res
    */
   callback: function (req, res) {
+    if (!req.query.code) return handleAuthError(res, 'No authorization code supplied.');
+
     LinkedIn.auth.getAccessToken(res, req.query.code, function (err, token) {
         if (err) return handleAuthError(res, err);
 
@@ -70,7 +72,7 @@ var AuthController = {
               }, function (err, user) {
                 if (err) return handleAuthError(res, err);
 
-                res.json({ user: user });
+                return res.redirect('http://localhost:8080/#/auth?token=' + user.token);
               });
             } else {
                // Save updated user (mainly for token but other fields may have changed since last login)
@@ -79,18 +81,30 @@ var AuthController = {
                 user.tokenExpires = tokenObject.expires_in;
                 user.save(function (err, updatedUser) {
                   if (err) return handleAuthError(res, err);
-                  return res.json({ user: user });
+                 return res.redirect('http://localhost:8080/#/auth?token=' + user.token);
                 });
             }
           });
         });
+    });
+  },
+   /**
+   * Provide endpoint for webapp to request user object/verify token
+   *
+   * @param {Object} req
+   * @param {Object} res
+   */
+  user: function (req, res) {
+    var token = req.headers.token;
 
+    User.findOne({ token: token }, function (err, user) {
+      if (err) console.log(err);
 
-
-
-
-        //return res.json({ hey: "Pop pop!" });
-        //return res.redirect('http://localhost:8080/');
+      if (!user) {
+        return res.json({ status: '403', error: 'You are not permitted to perform this action.'});
+      }
+      // Send user object
+      return res.json({ user: user });
     });
   }
 };
@@ -101,5 +115,5 @@ function handleAuthError (res, error) {
   // Log error
   console.log(error);
   // Send error response
-  res.json({ error: 'Error authenticating.' });
+  return res.redirect('http://localhost:8080/?error=1');
 }

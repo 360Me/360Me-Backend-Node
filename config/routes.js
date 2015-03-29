@@ -43,6 +43,7 @@ module.exports.routes = {
      ***************************************************************************/
     'get /logout': 'AuthController.logout',
     'get /auth/linkedin': 'AuthController.linkedin',
-    'get /auth/linkedin/callback': 'AuthController.callback'
+    'get /auth/linkedin/callback': 'AuthController.callback',
+    'get /auth/user': 'AuthController.user',
     //'get /auth/linkedin/:action': 'AuthController.callback'
 };
